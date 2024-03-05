@@ -1,0 +1,6 @@
+Scrapping With Pools
+Due tomorrow at 11:59 PM
+Instructions
+წინა დავალება შეასრულეთ შემდეგი კლასების გამოყენებით
+ProcessPoolExecutor, ThreadPoolExecutor
+შექმენით 5 პროცესი და თითოეულ პროცესში 20 ნაკადი. ფაილში შეინახეთ 100 პროდუქტის ინფორმაცია.
