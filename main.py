@@ -20,7 +20,7 @@ def fetch_product(products_list, index):
         print('ERROR: Incorrect status code!')
 
 
-def run_processes(products_list):
+def run_threads(products_list):
     with concurrent.futures.ThreadPoolExecutor() as executor:
         for i in range(0, 100):
             executor.submit(fetch_product, products_list, i+1)
