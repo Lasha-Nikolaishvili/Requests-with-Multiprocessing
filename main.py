@@ -1,6 +1,8 @@
 import json
 import threading
+import concurrent.futures
 import requests
+import time
 
 
 def write_to_json_file(products_list):
@@ -18,18 +20,30 @@ def fetch_product(products_list, index):
         print('ERROR: Incorrect status code!')
 
 
-def run_threads(thread_pool):
-    for i in range(0, 100):
-        thread_pool.append(threading.Thread(target=fetch_product, args=(products, i+1)))
-        thread_pool[i].start()
+def run_processes(products_list):
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        for i in range(0, 100):
+            executor.submit(fetch_product, products_list, i+1)
 
-    for i in range(0, 100):
-        thread_pool[i].join()
+    # for i in range(0, 100):
+    #     thread_pool.append(threading.Thread(target=fetch_product, args=(products_list, i+1)))
+    #     thread_pool[i].start()
+    #
+    # for i in range(0, 100):
+    #     thread_pool[i].join()
+
+
+def main():
+    start = time.perf_counter()
+    # threads = []
+    products = []
+
+    run_threads(products)
+    write_to_json_file(products)
+
+    end = time.perf_counter()
+    print(f'Time taken in seconds: {end - start}.')
 
 
 if __name__ == '__main__':
-    threads = []
-    products = []
-
-    run_threads(threads)
-    write_to_json_file(products)
+    main()
