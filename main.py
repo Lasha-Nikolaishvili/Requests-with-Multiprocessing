@@ -2,11 +2,9 @@ import json
 import multiprocessing
 import concurrent.futures
 import requests
-import time
 
 
 def write_to_json_file(products_list):
-    print(__name__, products_list)
     json_object = json.dumps(products_list, indent=4)
     with open('products.json', 'w') as products_json:
         products_json.write(json_object)
@@ -21,22 +19,18 @@ def fetch_product(index, products_list):
 
 
 def run_threads(start_i, end_i, products_list):
-    print('in threads')
     with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
         executor.map(lambda index: fetch_product(index, products_list), range(start_i, end_i))
 
 
-def run_processes():
-    intervals = [(1, 21), (21, 41), (41, 61), (61, 81), (81, 101)]
-    print('in process')
+def run_processes(process_cnt):
+    thread_cnt = 20
+    intervals = [(x * thread_cnt + 1, (x + 1) * thread_cnt + 1) for x in range(process_cnt)]
 
-    # Create a Manager object
     manager = multiprocessing.Manager()
-
-    # Create a shared list using the Manager
     products = manager.list()
 
-    with concurrent.futures.ProcessPoolExecutor(max_workers=5) as executor:
+    with concurrent.futures.ProcessPoolExecutor(max_workers=process_cnt) as executor:
         futures = [executor.submit(run_threads, start_i, end_i, products) for start_i, end_i in intervals]
         for future in concurrent.futures.as_completed(futures):
             future.result()
@@ -45,15 +39,10 @@ def run_processes():
 
 
 def main():
-    start = time.perf_counter()
-    products = run_processes()
+    process_cnt = 5
+
+    products = run_processes(process_cnt)
     write_to_json_file(list(products))
-
-    end = time.perf_counter()
-    print(f'Time taken in seconds: {end - start}')
-
-
-print(__name__)
 
 
 if __name__ == '__main__':
