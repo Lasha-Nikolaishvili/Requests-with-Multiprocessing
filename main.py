@@ -18,8 +18,8 @@ def fetch_product(index, products_list):
         print(f'ERROR: Incorrect status code! Status Code: {r.status_code}')
 
 
-def run_threads(start_i, end_i, products_list):
-    with concurrent.futures.ThreadPoolExecutor(max_workers=20) as executor:
+def run_threads(thread_cnt, start_i, end_i, products_list):
+    with concurrent.futures.ThreadPoolExecutor(max_workers=thread_cnt) as executor:
         executor.map(lambda index: fetch_product(index, products_list), range(start_i, end_i))
 
 
@@ -31,7 +31,7 @@ def run_processes(process_cnt):
     products = manager.list()
 
     with concurrent.futures.ProcessPoolExecutor(max_workers=process_cnt) as executor:
-        futures = [executor.submit(run_threads, start_i, end_i, products) for start_i, end_i in intervals]
+        futures = [executor.submit(run_threads, thread_cnt, start_i, end_i, products) for start_i, end_i in intervals]
         for future in concurrent.futures.as_completed(futures):
             future.result()
 
